@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <cmath>
 
 using namespace std;
 
@@ -32,18 +33,20 @@ string dec_to_U2(int number);
 string dec_to_U1(int number);
 
 
+int U2_to_dec (string U2);
+int U1_to_dec(string U1);
 
-// TODO:
-// int U2_to_dec (string U2);
-// int U1_to_dec(string U1);
 
+// TODO
+// string dec_to_IEEE754(int number);
+// include floating numbers. f.ex 101,10 (2);
 
 int main()
 {
     cout << dec_to_any_BCD(123, 3) << endl;
     cout << any_BCD_to_dec(dec_to_any_BCD(123, 3), 3) << endl;
     cout << dec_to_U2(-37) << endl;
-    cout << dec_to_U1(-113) << endl;
+    cout << U1_to_dec("1101");
 } 
 
 string dec_to_any (int number, int base)
@@ -191,3 +194,30 @@ string dec_to_U1(int number)
     }
     return U1;
 }   
+
+int U2_to_dec (string U2)
+{
+    int dec = 0;
+    int size = U2.size();
+    int potega = pow(2, size - 1);
+    if (U2[0] == '1')
+    {
+        dec += potega * (-1);
+    }
+    potega /= 2;
+
+    for (int i = 1; i < size; i++)
+    {
+        if (U2[i] == '1')
+        {
+            dec += potega;
+        }
+        potega /= 2;
+    }
+    return dec;
+}
+
+int U1_to_dec(string U1)
+{
+    return U2_to_dec(U1) + 1;
+}
