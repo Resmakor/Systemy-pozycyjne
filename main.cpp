@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <cmath>
+#include <sstream>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ map <string, int> values = {
     {"F", 15}
 };
 
-string dec_to_any (int number, int base);
+void dec_to_any (string number, int base);
 int any_to_dec (string number, int base);
 
 string any_BCD_to_dec(string BCD, int BCD_type);
@@ -43,29 +44,55 @@ int U1_to_dec(string U1);
 
 int main()
 {
-    cout << dec_to_any_BCD(123, 3) << endl;
-    cout << any_BCD_to_dec(dec_to_any_BCD(123, 3), 3) << endl;
-    cout << dec_to_U2(-37) << endl;
-    cout << U1_to_dec("1101");
+    //cout << dec_to_any(123.4, 2) << endl;
+   // cout << any_BCD_to_dec(dec_to_any_BCD(123, 3), 3) << endl;
+   // cout << dec_to_U2(-37) << endl;
+    // cout << U1_to_dec("1101");
+    string test = "123,4";
+    string lewo = test.substr(0, 3);
+    string prawo = test.substr(4, 4);
+    cout << lewo << ' ' << prawo << endl;
+    dec_to_any("123123,442", 3);
 } 
 
-string dec_to_any (int number, int base)
+void dec_to_any (string number, int base)
 {
-    string converted = "";
-    while (number != 0)
-    {
-        int add = number % base;
-        if (add > 9)
+
+    int comma_position = number.find(',');
+
+    if (comma_position != string::npos)
+    {   
+        string left = number.substr(0, comma_position);
+        stringstream geek1(left);
+        int left_dec = 0;
+        geek1 >> left_dec;
+
+
+        string right = "0." + number.substr(comma_position + 1, number.size() - 1);
+        stringstream geek2(right);
+        float right_dec = 0;
+        geek2 >> right_dec;
+
+
+        string left_converted = "";
+        while (left_dec != 0)
         {
-            converted = letters[add] + converted;
+            int add = left_dec % base;
+            if (add > 9)
+            {
+                left_converted = letters[add] + left_converted;
+            }
+            else
+            {
+                left_converted = to_string(add) + left_converted;
+            }
+            left_dec /= base;
         }
-        else
-        {
-            converted = to_string(add) + converted;
-        }
-        number /= base;
+
+        
     }
-    return converted;
+
+   
 }
 
 int any_to_dec (string number, int base)
@@ -92,7 +119,7 @@ int any_to_dec (string number, int base)
     return dec;
 }
 
-string any_BCD_to_dec(string BCD, int BCD_type)
+/*string any_BCD_to_dec(string BCD, int BCD_type)
 {
     string dec = "";
     int BCD_size = BCD.size();
@@ -220,4 +247,4 @@ int U2_to_dec (string U2)
 int U1_to_dec(string U1)
 {
     return U2_to_dec(U1) + 1;
-}
+}*/
