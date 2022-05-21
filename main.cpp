@@ -48,11 +48,7 @@ int main()
    // cout << any_BCD_to_dec(dec_to_any_BCD(123, 3), 3) << endl;
    // cout << dec_to_U2(-37) << endl;
     // cout << U1_to_dec("1101");
-    string test = "123,4";
-    string lewo = test.substr(0, 3);
-    string prawo = test.substr(4, 4);
-    cout << lewo << ' ' << prawo << endl;
-    dec_to_any("123123,442", 3);
+    dec_to_any("123,13131232132", 2);
 } 
 
 void dec_to_any (string number, int base)
@@ -70,11 +66,20 @@ void dec_to_any (string number, int base)
 
         string right = "0." + number.substr(comma_position + 1, number.size() - 1);
         stringstream geek2(right);
-        float right_dec = 0;
-        geek2 >> right_dec;
+        float right_float = 0;
+        geek2 >> right_float;
+        cout << left_dec << ' ' << right_float << endl;
 
-
+       
         string left_converted = "";
+        bool minus = false;
+
+         if (left_dec < 0)
+        {
+            minus = true;
+            left_dec *= (-1);
+        }
+
         while (left_dec != 0)
         {
             int add = left_dec % base;
@@ -82,6 +87,7 @@ void dec_to_any (string number, int base)
             {
                 left_converted = letters[add] + left_converted;
             }
+
             else
             {
                 left_converted = to_string(add) + left_converted;
@@ -89,7 +95,74 @@ void dec_to_any (string number, int base)
             left_dec /= base;
         }
 
-        
+        if (minus)
+        {
+            left_converted = "-" + left_converted;
+        }
+
+        cout << left_converted << endl;
+
+
+        int digits_counter = 0;
+
+        string right_converted = "";
+        float current_right = base * right_float;
+
+        while(digits_counter != 20)
+        {
+            string current_right_string = to_string(current_right);
+            int dot_position = current_right_string.find(".");
+
+            string left_fl;
+            string right_fl;
+
+            left_fl = current_right_string.substr(0, dot_position);
+
+            right_fl = current_right_string.substr(dot_position + 1, current_right_string.size() - 1);
+
+
+            // UWAGA NA > 9
+            if (left_fl.size() > 1)
+            {
+                stringstream to_int(left_fl);
+                int num;
+                to_int >> num;
+                string letter = letters[num];
+                right_converted += letter;
+            }
+
+            else
+            {
+                right_converted += left_fl;
+            }
+            
+
+            right_fl = "0." + right_fl;
+            cout << right_fl << endl;
+            stringstream str_to_float(right_fl);
+
+            str_to_float >> current_right;
+            current_right *= base;
+
+            digits_counter++;
+
+            bool only_zeros = true;
+            for(int i = 0; i < right_fl.size(); i++)
+            {
+                if (right_fl[i] != '0' || right_fl[i] != '.')
+                {
+                    only_zeros = false;
+                }
+
+            }
+
+            if (only_zeros)
+            {
+                break;
+            }
+        }
+        cout << left_converted << "," <<  right_converted << endl;
+         
     }
 
    
