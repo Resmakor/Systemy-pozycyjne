@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <cmath>
+#include <sstream>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ map <string, int> values = {
     {"F", 15}
 };
 
-string dec_to_any (int number, int base);
+void dec_to_any (string number, int base);
 int any_to_dec (string number, int base);
 
 string any_BCD_to_dec(string BCD, int BCD_type);
@@ -43,29 +44,128 @@ int U1_to_dec(string U1);
 
 int main()
 {
-    cout << dec_to_any_BCD(123, 3) << endl;
-    cout << any_BCD_to_dec(dec_to_any_BCD(123, 3), 3) << endl;
-    cout << dec_to_U2(-37) << endl;
-    cout << U1_to_dec("1101");
+    //cout << dec_to_any(123.4, 2) << endl;
+   // cout << any_BCD_to_dec(dec_to_any_BCD(123, 3), 3) << endl;
+   // cout << dec_to_U2(-37) << endl;
+    // cout << U1_to_dec("1101");
+    dec_to_any("123,13131232132", 2);
 } 
 
-string dec_to_any (int number, int base)
+void dec_to_any (string number, int base)
 {
-    string converted = "";
-    while (number != 0)
-    {
-        int add = number % base;
-        if (add > 9)
+
+    int comma_position = number.find(',');
+
+    if (comma_position != string::npos)
+    {   
+        string left = number.substr(0, comma_position);
+        stringstream geek1(left);
+        int left_dec = 0;
+        geek1 >> left_dec;
+
+
+        string right = "0." + number.substr(comma_position + 1, number.size() - 1);
+        stringstream geek2(right);
+        float right_float = 0;
+        geek2 >> right_float;
+        cout << left_dec << ' ' << right_float << endl;
+
+       
+        string left_converted = "";
+        bool minus = false;
+
+         if (left_dec < 0)
         {
-            converted = letters[add] + converted;
+            minus = true;
+            left_dec *= (-1);
         }
-        else
+
+        while (left_dec != 0)
         {
-            converted = to_string(add) + converted;
+            int add = left_dec % base;
+            if (add > 9)
+            {
+                left_converted = letters[add] + left_converted;
+            }
+
+            else
+            {
+                left_converted = to_string(add) + left_converted;
+            }
+            left_dec /= base;
         }
-        number /= base;
+
+        if (minus)
+        {
+            left_converted = "-" + left_converted;
+        }
+
+        cout << left_converted << endl;
+
+
+        int digits_counter = 0;
+
+        string right_converted = "";
+        float current_right = base * right_float;
+
+        while(digits_counter != 20)
+        {
+            string current_right_string = to_string(current_right);
+            int dot_position = current_right_string.find(".");
+
+            string left_fl;
+            string right_fl;
+
+            left_fl = current_right_string.substr(0, dot_position);
+
+            right_fl = current_right_string.substr(dot_position + 1, current_right_string.size() - 1);
+
+
+            // UWAGA NA > 9
+            if (left_fl.size() > 1)
+            {
+                stringstream to_int(left_fl);
+                int num;
+                to_int >> num;
+                string letter = letters[num];
+                right_converted += letter;
+            }
+
+            else
+            {
+                right_converted += left_fl;
+            }
+            
+
+            right_fl = "0." + right_fl;
+            cout << right_fl << endl;
+            stringstream str_to_float(right_fl);
+
+            str_to_float >> current_right;
+            current_right *= base;
+
+            digits_counter++;
+
+            bool only_zeros = true;
+            for(int i = 0; i < right_fl.size(); i++)
+            {
+                if (right_fl[i] != '0' || right_fl[i] != '.')
+                {
+                    only_zeros = false;
+                }
+
+            }
+
+            if (only_zeros)
+            {
+                break;
+            }
+        }
+        cout << left_converted << "," <<  right_converted << endl;
+         
     }
-    return converted;
+
+   
 }
 
 int any_to_dec (string number, int base)
@@ -92,7 +192,7 @@ int any_to_dec (string number, int base)
     return dec;
 }
 
-string any_BCD_to_dec(string BCD, int BCD_type)
+/*string any_BCD_to_dec(string BCD, int BCD_type)
 {
     string dec = "";
     int BCD_size = BCD.size();
@@ -220,4 +320,4 @@ int U2_to_dec (string U2)
 int U1_to_dec(string U1)
 {
     return U2_to_dec(U1) + 1;
-}
+}*/
